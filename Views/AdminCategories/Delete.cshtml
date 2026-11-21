@@ -1,0 +1,84 @@
+﻿@model SweetBakery.Models.Category
+
+@{
+    ViewData["Title"] = "Delete Category";
+}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h1 class="text-danger mb-3">
+                        Delete Category
+                    </h1>
+
+                    @if (Model.Products.Any())
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Cannot delete this category.</strong>
+                            <br />
+                            This category has
+                            <strong>@Model.Products.Count</strong>
+                            product(s) assigned to it.
+                            <br />
+                            Remove or reassign those products before deleting this category.
+                        </div>
+
+                        <h3>@Model.Name</h3>
+
+                        <p class="text-muted">
+                            @Model.Description
+                        </p>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+                            Back to Categories
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Are you sure you want to delete this category?
+                            This action cannot be undone.
+                        </div>
+
+                        <h3>@Model.Name</h3>
+
+                        <p class="text-muted">
+                            @Model.Description
+                        </p>
+
+                        <form asp-action="Delete"
+                              method="post">
+
+                            <input type="hidden"
+                                   asp-for="CategoryId" />
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Yes, Delete Category
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-secondary">
+                                Cancel
+                            </a>
+
+                        </form>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,76 @@
+﻿@model IEnumerable<SweetBakery.Models.Customer>
+
+@{
+    ViewData["Title"] = "Manage Customers";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>👥 Manage Customers</h1>
+            <p class="text-muted">
+                View registered SweetBakery customers.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h5 class="mb-3">
+                Total Customers: @Model.Count()
+            </h5>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var customer in Model)
+                        {
+                            <tr>
+                                <td>@customer.CustomerId</td>
+                                <td>@customer.FullName</td>
+                                <td>
+                                    @(customer.Email ?? "Not provided")
+                                </td>
+                                <td>
+                                    @(customer.Phone ?? "Not provided")
+                                </td>
+                                <td>
+                                    @(customer.City ?? "Not provided")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <p class="text-muted text-center mt-3">
+                    No customers have registered yet.
+                </p>
+            }
+
+        </div>
+    </div>
+
+</div>

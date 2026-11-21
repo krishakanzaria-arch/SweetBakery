@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h1>🛠️ Admin Dashboard</h1>
+        <p class="text-muted">Manage your SweetBakery store.</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>📦 Total Products</h5>
+                    <h2>@ViewBag.TotalProducts</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>🗂️ Total Categories</h5>
+                    <h2>@ViewBag.TotalCategories</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>👥 Total Customers</h5>
+                    <h2>@ViewBag.TotalCustomers</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>🛒 Total Orders</h5>
+                    <h2>@ViewBag.TotalOrders</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>💰 Total Sales</h5>
+                    <h2>₹@ViewBag.TotalSales</h2>
+                    <small class="text-muted">Delivered orders</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>⏳ Pending Orders</h5>
+                    <h2>@ViewBag.PendingOrders</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts -->
+    <h3 class="mb-3">Sales &amp; Order Analytics</h3>
+
+    <div class="d-flex gap-2 mb-3">
+        <a asp-controller="Admin"
+           asp-action="ExportSalesExcel"
+           class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i>
+            Download Excel Report
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">📈 Monthly Sales</h5>
+                    <div style="height:320px; position:relative;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">🥧 Order Status</h5>
+                    <div style="height:320px; position:relative;">
+                        <canvas id="orderStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <h3 class="mb-3">Store Management</h3>
+    <a asp-controller="Admin"
+       asp-action="StockManagement"
+       class="btn btn-primary">
+        <i class="bi bi-box-seam"></i>
+        Stock Management
+    </a>
+
+    <!-- Store Management -->
+    <h3 class="mb-3">Store Management</h3>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>📦 Products</h4>
+                    <p class="text-muted">Add, edit, view and delete bakery products.</p>
+                    <a asp-controller="AdminProducts" asp-action="Index"
+                       class="btn btn-primary">Manage Products</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>🗂️ Categories</h4>
+                    <p class="text-muted">Manage your bakery product categories.</p>
+                    <a asp-controller="AdminCategories" asp-action="Index"
+                       class="btn btn-primary">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>🛒 Orders</h4>
+                    <p class="text-muted">View customer orders and update their status.</p>
+                    <a asp-controller="AdminOrders" asp-action="Index"
+                       class="btn btn-primary">Manage Orders</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>👥 Customers</h4>
+                    <p class="text-muted">View registered customers and their details.</p>
+                    <a asp-controller="AdminCustomers" asp-action="Index"
+                       class="btn btn-primary">Manage Customers</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>💳 Payments</h4>
+                    <p class="text-muted">View payment records, methods, amounts and statuses.</p>
+                    <a asp-controller="AdminPayments" asp-action="Index"
+                       class="btn btn-primary">Manage Payments</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const salesLabels = @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesLabels)
+                    );
+
+        const salesData = @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesData)
+                    );
+
+        const statusLabels = @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(ViewBag.OrderStatusLabels)
+                    );
+
+        const statusData = @Html.Raw(
+                    System.Text.Json.JsonSerializer.Serialize(ViewBag.OrderStatusData)
+                    );
+
+        // Monthly sales bar chart
+        new Chart(document.getElementById('salesChart'), {
+            type: 'bar',
+            data: {
+                labels: salesLabels,
+                datasets: [{
+                    label: 'Sales (₹)',
+                    data: salesData,
+                    backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                    borderColor: 'rgb(111, 66, 193)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => '₹' + value
+                        }
+                    }
+                }
+            }
+        });
+
+        // Order status doughnut chart
+        new Chart(document.getElementById('orderStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusData,
+                    backgroundColor: [
+                        '#198754',
+                        '#ffc107',
+                        '#0d6efd',
+                        '#dc3545',
+                        '#6f42c1',
+                        '#20c997',
+                        '#fd7e14'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+}

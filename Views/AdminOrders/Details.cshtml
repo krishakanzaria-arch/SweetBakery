@@ -1,0 +1,367 @@
+﻿@model SweetBakery.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>📦 Order #@Model.OrderId</h1>
+            <p class="text-muted">
+                View complete order information.
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            ← Back to Orders
+        </a>
+
+    </div>
+
+    <div class="row">
+
+        <!-- Customer Information -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        👤 Customer Information
+                    </h4>
+
+                    <p>
+                        <strong>Name:</strong>
+                        @(Model.Customer?.FullName ?? "Unknown")
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        @(Model.Customer?.Email ?? "Unknown")
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        @(Model.Customer?.Phone ?? "Not provided")
+                    </p>
+
+                    <p>
+                        <strong>Address:</strong>
+                        @(Model.Customer?.Address ?? "Not provided")
+                    </p>
+
+                    <p>
+                        <strong>City:</strong>
+                        @(Model.Customer?.City ?? "Not provided")
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Order Information -->
+
+        <div class="col-md-6 mb-4">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+                        📋 Order Information
+                    </h4>
+
+                    <p>
+                        <strong>Order ID:</strong>
+                        #@Model.OrderId
+                    </p>
+
+                    <p>
+                        <strong>Order Date:</strong>
+                        @Model.OrderDate.ToString(
+                            "dd MMM yyyy, hh:mm tt")
+                    </p>
+
+                    <p>
+                        <strong>Current Status:</strong>
+
+                        @if (Model.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+                        }
+                        else if (Model.Status == "Confirmed")
+                        {
+                            <span class="badge bg-info text-dark">
+                                Confirmed
+                            </span>
+                        }
+                        else if (Model.Status == "Preparing")
+                        {
+                            <span class="badge bg-primary">
+                                Preparing
+                            </span>
+                        }
+                        else if (Model.Status == "Out for Delivery")
+                        {
+                            <span class="badge bg-secondary">
+                                Out for Delivery
+                            </span>
+                        }
+                        else if (Model.Status == "Delivered")
+                        {
+                            <span class="badge bg-success">
+                                Delivered
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-dark">
+                                @Model.Status
+                            </span>
+                        }
+                    </p>
+
+                    <form asp-action="UpdateStatus"
+                          method="post"
+                          class="mt-3">
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.OrderId" />
+
+                        <label class="form-label">
+                            Change Order Status
+                        </label>
+
+                        <div class="input-group">
+
+                            <select name="status"
+                                    class="form-select">
+
+                                <option value="Pending"
+                                        selected="@(Model.Status == "Pending")">
+                                    Pending
+                                </option>
+
+                                <option value="Confirmed"
+                                        selected="@(Model.Status == "Confirmed")">
+                                    Confirmed
+                                </option>
+
+                                <option value="Preparing"
+                                        selected="@(Model.Status == "Preparing")">
+                                    Preparing
+                                </option>
+
+                                <option value="Out for Delivery"
+                                        selected="@(Model.Status == "Out for Delivery")">
+                                    Out for Delivery
+                                </option>
+
+                                <option value="Delivered"
+                                        selected="@(Model.Status == "Delivered")">
+                                    Delivered
+                                </option>
+
+                            </select>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                Update Status
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <p>
+                        <strong>Total Amount:</strong>
+                        ₹@Model.TotalAmount
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Ordered Products -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                🛒 Ordered Products
+            </h4>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+
+                                <td>
+                                    @(item.Product?.Name ?? "Unknown Product")
+                                </td>
+
+                                <td>
+                                    ₹@item.Price
+                                </td>
+
+                                <td>
+                                    @item.Quantity
+                                </td>
+
+                                <td>
+                                    ₹@(item.Price * item.Quantity)
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Payment Information -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                💳 Payment Information
+            </h4>
+
+            @foreach (var payment in Model.Payments)
+            {
+                <p>
+                    <strong>Payment Method:</strong>
+                    @payment.PaymentMethod
+                </p>
+
+                <p>
+                    <strong>Payment Status:</strong>
+                    @payment.PaymentStatus
+                </p>
+
+                <p>
+                    <strong>Transaction ID:</strong>
+                    @(payment.TransactionId ?? "Not applicable")
+                </p>
+
+                <p>
+                    <strong>Payment Date:</strong>
+                    @payment.PaymentDate.ToString(
+                        "dd MMM yyyy, hh:mm tt")
+                </p>
+            }
+
+        </div>
+
+    </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h4 class="mb-3">Order Cancellation & Returns</h4>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.ReturnStatus))
+            {
+                <p>
+                    <strong>Return Status:</strong>
+                    @Model.ReturnStatus
+                </p>
+
+                <p>
+                    <strong>Requested On:</strong>
+                    @(Model.ReturnRequestedAt?.ToString("dd MMM yyyy, hh:mm tt")
+                        ?? "Not available")
+                </p>
+
+                <p>
+                    <strong>Return Reason:</strong>
+                    @Model.ReturnReason
+                </p>
+
+                @if (Model.ReturnStatus == "Requested")
+                {
+                    <div class="d-flex gap-2">
+                        <form asp-action="ApproveReturn"
+                              asp-route-id="@Model.OrderId"
+                              method="post">
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    onclick="return confirm('Approve this return request?');">
+                                Approve Return
+                            </button>
+                        </form>
+
+                        <form asp-action="RejectReturn"
+                              asp-route-id="@Model.OrderId"
+                              method="post">
+                            <button type="submit"
+                                    class="btn btn-danger"
+                                    onclick="return confirm('Reject this return request?');">
+                                Reject Return
+                            </button>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted mb-0">
+                    No return request has been submitted for this order.
+                </p>
+            }
+        </div>
+    </div>
+
+</div>
